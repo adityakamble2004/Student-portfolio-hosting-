@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>⚡ Project Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+
+    <style>
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: Arial;
+            padding: 20px;
+        }
+
+        h1 { color: #38bdf8; }
+
+        textarea {
+            width: 100%;
+            height: 260px;
+            background: #020617;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        input {
+            padding: 10px;
+            width: 260px;
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 18px;
+            margin: 10px 5px 0 0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .generate { background: #22c55e; }
+        .clean { background: #f59e0b; }
+        .clear { background: #ef4444; }
+
+        button:hover { opacity: 0.85; }
+
+        .box {
+            margin-top: 15px;
+            padding: 10px;
+            background: #020617;
+            border-radius: 10px;
+            border: 1px solid #334155;
+        }
+
+        #preview {
+            white-space: pre;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>⚡ Project Structure Generator</h1>
+
+<input type="text" id="projectName" placeholder="Project Name (default: project)" />
+
+<textarea id="input" placeholder="Paste your folder structure..."></textarea>
+
+<br>
+<button class="clean" onclick="cleanInput()">✨ Clean</button>
+<button class="generate" onclick="previewTree()">🌳 Preview</button>
+<button class="generate" onclick="generateProject()">🚀 Generate ZIP</button>
+<button class="clear" onclick="clearAll()">❌ Clear</button>
+
+<div class="box" id="status">Status: Waiting...</div>
+
+<div class="box">
+    <h3>🌳 Preview</h3>
+    <div id="preview"></div>
+</div>
+
+<script>
+
+// -------- CLEAN INPUT --------
+function cleanInput() {
+    let input = document.getElementById("input").value;
+
+    input = input
+        .replace(/-/g, "├──")
+        .replace(/\t/g, "    ");
+
+    document.getElementById("input").value = input;
+    setStatus("✨ Cleaned");
+}
+
+// -------- TEMPLATE --------
+function getTemplate(name) {
+    if (name.endsWith(".php")) return `<?php\n// ${name}\n?>`;
+    if (name.endsWith(".html")) return `<!DOCTYPE html>\n<html>\n<head>\n<title>${name}</title>\n</head>\n<body>\n</body>\n</html>`;
+    if (name.endsWith(".js")) return `// ${name}\nconsole.log("Hello");`;
+    if (name.endsWith(".css")) return `/* ${name} */\nbody {}`;
+    return `// ${name}`;
+}
+
+// -------- FINAL PARSER --------
+function parseStructure(input) {
+    const lines = input.split("\n");
+    let stack = [];
+    let result = [];
+
+    lines.forEach((line, index) => {
+        if (!line.trim()) return;
+
+        let cleanLine = line.split("#")[0];
+
+        // FIXED DEPTH DETECTION
+        let depth = (cleanLine.match(/(│   |    )/g) || []).length;
+
+        let name = cleanLine
+            .replace(/├──|└──/g, "")
+            .replace(/│/g, "")
+            .trim();
+
+        if (!name) return;
+
+        // SKIP ROOT
+        if (index === 0 && name.endsWith("/")) return;
+
+        // FIX STACK
+        stack = stack.slice(0, depth);
+
+        let currentPath = stack.join("/");
+
+        let fullPath = currentPath ? currentPath + "/" + name : name;
+
+        result.push(fullPath);
+
+        // IF FOLDER → PUSH
+        if (name.endsWith("/")) {
+            stack.push(name.replace("/", ""));
+        }
+    });
+
+    return result;
+}
+
+// -------- PREVIEW --------
+function previewTree() {
+    const input = document.getElementById("input").value.trim();
+
+    if (!input) {
+        setStatus("❌ No input");
+        return;
+    }
+
+    let paths = parseStructure(input);
+
+    document.getElementById("preview").innerText = paths.join("\n");
+
+    setStatus("🌳 Preview ready");
+}
+
+// -------- FINAL ZIP GENERATOR --------
+function generateProject() {
+    const input = document.getElementById("input").value.trim();
+    let projectName = document.getElementById("projectName").value.trim();
+
+    if (!input) {
+        setStatus("❌ Please enter structure");
+        return;
+    }
+
+    if (!projectName) projectName = "project";
+
+    let zip = new JSZip();
+    let root = zip.folder(projectName);
+
+    let paths = parseStructure(input);
+
+    try {
+        paths.forEach(path => {
+
+            path = path.replace(/\/+/g, "/");
+
+            if (path.endsWith("/")) {
+                root.folder(path.replace(/\/$/, ""));
+            } else {
+                let parts = path.split("/");
+                let fileName = parts.pop();
+                let folderPath = parts.join("/");
+
+                let folder = root;
+
+                if (folderPath) {
+                    folder = root.folder(folderPath);
+                }
+
+                folder.file(fileName, getTemplate(fileName));
+            }
+        });
+
+        zip.generateAsync({ type: "blob" }).then(content => {
+            let a = document.createElement("a");
+            a.href = URL.createObjectURL(content);
+            a.download = projectName + ".zip";
+            a.click();
+        });
+
+        setStatus("✅ Project generated successfully");
+
+    } catch (e) {
+        console.error(e);
+        setStatus("❌ Error generating project");
+    }
+}
+
+// -------- CLEAR --------
+function clearAll() {
+    document.getElementById("input").value = "";
+    document.getElementById("projectName").value = "";
+    document.getElementById("preview").innerText = "";
+    setStatus("🧹 Cleared");
+}
+
+// -------- STATUS --------
+function setStatus(msg) {
+    document.getElementById("status").innerText = "Status: " + msg;
+}
+
+</script>
+
+</body>
+</html>

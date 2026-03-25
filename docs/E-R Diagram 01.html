@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ER Diagram</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+    }
+
+    .container {
+        position: relative;
+        width: 1000px;
+        height: 700px;
+        margin: 50px auto;
+        border: 2px solid #ccc;
+        background: white;
+    }
+
+    .box {
+        position: absolute;
+        width: 160px;
+        padding: 10px;
+        border: 2px solid black;
+        text-align: center;
+        background: #e3f2fd;
+        font-weight: bold;
+    }
+
+    /* Positioning */
+    #users { top: 50px; left: 50px; }
+    #profiles { top: 200px; left: 50px; }
+    #portfolios { top: 50px; left: 350px; }
+    #projects { top: 200px; left: 350px; }
+    #rankings { top: 50px; left: 650px; }
+    #likes { top: 200px; left: 650px; }
+    #views { top: 350px; left: 650px; }
+    #messages { top: 350px; left: 350px; }
+
+    /* Lines */
+    .line {
+        position: absolute;
+        background: black;
+    }
+
+    .h-line { height: 2px; }
+    .v-line { width: 2px; }
+
+    /* Custom lines */
+    #line1 { top: 100px; left: 210px; width: 140px; }
+    #line2 { top: 120px; left: 210px; height: 120px; }
+    #line3 { top: 100px; left: 510px; width: 140px; }
+    #line4 { top: 120px; left: 510px; height: 120px; }
+    #line5 { top: 240px; left: 510px; width: 140px; }
+    #line6 { top: 240px; left: 210px; width: 140px; }
+    #line7 { top: 390px; left: 510px; width: 140px; }
+    #line8 { top: 390px; left: 350px; width: 160px; }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Boxes -->
+    <div class="box" id="users">Users</div>
+    <div class="box" id="profiles">Profiles</div>
+    <div class="box" id="portfolios">Portfolios</div>
+    <div class="box" id="projects">Projects</div>
+    <div class="box" id="rankings">Rankings</div>
+    <div class="box" id="likes">Likes</div>
+    <div class="box" id="views">Views</div>
+    <div class="box" id="messages">Messages</div>
+
+    <!-- Lines -->
+    <div class="line h-line" id="line1"></div>
+    <div class="line v-line" id="line2"></div>
+    <div class="line h-line" id="line3"></div>
+    <div class="line v-line" id="line4"></div>
+    <div class="line h-line" id="line5"></div>
+    <div class="line h-line" id="line6"></div>
+    <div class="line h-line" id="line7"></div>
+    <div class="line h-line" id="line8"></div>
+
+</div>
+
+</body>
+</html>
