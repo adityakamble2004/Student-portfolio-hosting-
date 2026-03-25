@@ -1,0 +1,62 @@
+1️⃣ 👑 Admin
+
+👉 System controller
+
+Role:
+Manage all users (students & recruiters)
+Approve/reject portfolios
+Remove harmful content
+Monitor platform activity
+Manage rankings (optional control)
+
+💡 Think: Owner of the platform
+
+2️⃣ 👨‍💻 Student / Developer
+
+👉 Main content creators
+
+Role:
+Register & login
+Upload portfolio (ZIP)
+Get live portfolio link
+Manage their profile (skills, bio, resume)
+Track views / ranking
+
+💡 Think: People who showcase their work
+
+3️⃣ 💼 Recruiter
+
+👉 Talent seekers
+
+Role:
+Browse student profiles
+View portfolios
+Filter/search candidates
+Contact students
+Use ranking system to find top talent
+
+💡 Think: Companies / HR / interviewers
+
+4️⃣ 🌐 Guest User (Public Visitor)
+
+👉 No login required
+
+Role:
+View portfolios
+Explore top students
+Basic browsing
+
+⚠️ Limited access:
+
+No upload
+No advanced filters
+No messaging
+
+💡 Think: First-time visitor / casual recruiter
+
+🧠 Final Structure (Simple View)
+            Admin
+              |
+   ------------------------
+   |          |           |
+Student   Recruiter     Guest
